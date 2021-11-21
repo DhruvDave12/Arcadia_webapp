@@ -1,0 +1,20 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+<% if(team.length === 0){ %>
+    <h1 class = "display-6">No members to display</h1>
+<% } else { %>
+<% for(let t of team) { %> 
+<div class="card my-3">
+    <div class="card-body">
+        <ol>
+            <li>IGN: <%= t.ign %></li>
+            <li>Main Agent: <%= t.mainChar %></li>
+            <li>Main Weapon: <%= t.mainWeapon %></li>
+            <li>Secondary Weapon: <%= t.secondaryWeapon %></li>
+            <li>Current Rank: <%= t.currentRank%></li>
+            <li>Best Rank: <%= t.bestRank %></li>
+        </ol>
+    </div>
+</div>
+<% } %> 
+<% } %> 

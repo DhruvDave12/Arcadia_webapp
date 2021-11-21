@@ -1,0 +1,16 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+<% if(owner.length === 0) { %>
+    <h1 class="display-6">No teams to display</h1>
+<% } else { %> 
+<% for(let o of owner) { %> 
+<div class="card my-3" style="width: 18rem;">
+    <img src="<%= o.teamLogo.url%>" class="card-img-top" alt="">
+    <div class="card-body">
+      <h5 class="card-title">Name: <%= o.name %> </h5>
+      <h5 class="card-title">IGN: <%= o.ign %></h5>
+      <h5 class="card-title">Team Name: <%= o.teamName %></h5>
+    </div>
+  </div>
+<% } %> 
+<% } %> 

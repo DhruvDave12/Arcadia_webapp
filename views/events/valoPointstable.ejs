@@ -1,0 +1,26 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+<% if(allTeams.length === 0) { %>
+    <h2>No current Teams</h2>
+<% } else { %>
+    <% for(let aT of allTeams) { %>
+        <div class="card" style="width: 18rem;">
+            <img src="<%= aT.teamLogo.url %>" class="card-img-top" alt="">
+            <div class="card-body">
+              <h5 class="card-title">Team Name: <%= aT.teamName %></h5>
+
+              <% if(aT.points) { %> 
+              <h5 class="card-title">Total Wins: <%= aT.wins %></h5>
+              <h5 class="card-title">Total Losses: <%= aT.loss %></h5>
+              <h5 class="card-title">Total Draws: <%= aT.draws %></h5>
+              <h5 class="card-title">Rounds Played: <%= aT.roundsPlayed %></h5>
+              <h5 class="card-title">Rounds Won: <%= aT.roundsWon %></h5>
+              <h5 class="card-title">Rounds Lost: <%= aT.roundsLost %></h5>
+              <h5 class="card-title">Rounds Difference: <%= aT.roundDifference %></h5>
+              <h5 class="card-title text-success">Total Points: <%= aT.points %></h5>
+            <% }%> 
+              <a href="/edit/admin/<%= aT._id %>" class="btn btn-primary">Edit Stats</a>
+            </div>
+          </div>
+    <% } %> 
+<% } %> 

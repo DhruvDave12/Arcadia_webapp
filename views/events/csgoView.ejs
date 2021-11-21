@@ -1,0 +1,24 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+<a href="/csgo/add/admin/<%= id %>" class = "btn btn-info">Add Players</a>
+
+<h1 class="display-6 text-center">Members</h1>
+
+<% if(team.players.length === 0) { %>
+    <h5>No members yet</h5>
+<% } else { %>
+    <% for(let player of team.players) { %>
+        <div class="card my-3" style="width: 18rem;">
+            <div class="card-body">
+              <h5 class="card-title">Name: <%= player.name %> </h5>
+              <h5 class="card-title">IGN: <%= player.ign %> </h5>
+              <h5 class="card-title">Main Weapon: <%= player.mainWeapon %> </h5>
+              <h5 class="card-title">Secondary Weapon: <%= player.secondaryWeapon %> </h5>
+              <h5 class="card-title">Current Rank: <%= player.currentRank %> </h5>
+              <h5 class="card-title">Best Rank: <%= player.bestRank %> </h5>
+              <h5 class="card-title">Main Agent: <%= player.mainChar %> </h5>
+            </div>
+            <a href="/csgo/remove/<%= player._id %>/<%=team._id %>" class = "btn btn-danger">Remove</a>
+        </div>
+    <% } %>  
+<% } %> 

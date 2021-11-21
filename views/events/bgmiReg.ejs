@@ -1,0 +1,86 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+    <h1 class="display-5 my-3 text-center">Valorant Registration</h1>
+
+    <!-- Form for whole team -->
+    <div class="teamReg">
+        <div class="container">
+            <form action="/bgmi/reg/owner" method = "POST" class="validated-form" novalidate id = "ownerForm" enctype="multipart/form-data">
+                <h1 class = "display-6 text-center">TEAM REGISTRATION</h1>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Name of Team Captain</label>
+                    <input type="text" class="form-control" id="username" name = "username" placeholder="Username" required>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="ign" class="form-label">IGN of Team Captain</label>
+                    <input type="text" class="form-control" id="ign" name = "ign" placeholder="IGN" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="uid" class="form-label">UID of Team Captain</label>
+                    <input type="text" class="form-control" id="uid" name = "uid" placeholder="UID" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="teamName" class="form-label">Team Name</label>
+                    <input type="text" class="form-control" id="teamName" name = "teamName" placeholder = "teamName" required>
+                </div>
+    
+                <div class="mb-3">
+                    <label for="teamlogo" class="form-label">Team Logo</label>
+                    <input type="file" class="form-control" id="teamLogo" name = "image" placeholder = "teamLogo" required>
+                </div>
+                
+                <!-- teammembers -->
+
+                <div class="mb-3">
+                    <label for="teamMember2" class="form-label">Name of Player 2</label>
+                    <input type="text" class="form-control" id="teamMember2" name = "teamMember2" placeholder = "Member 2" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="ign2" class="form-label">IGN of Player 2</label>
+                    <input type="text" class="form-control" id="ign2" name = "ign2" placeholder="IGN" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="uid2" class="form-label">UID of Player 2</label>
+                    <input type="text" class="form-control" id="uid2" name = "uid2" placeholder="UID" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="teamMember3" class="form-label">Name of Player 3</label>
+                    <input type="text" class="form-control" id="teamMember3" name = "teamMember3" placeholder = "teamMember3" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="ign3" class="form-label">IGN of Player 3</label>
+                    <input type="text" class="form-control" id="ign3" name = "ign3" placeholder="IGN" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="uid3" class="form-label">UID of Player 3</label>
+                    <input type="text" class="form-control" id="uid3" name = "uid3" placeholder="UID" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="teamMember4" class="form-label">Name of Player 4</label>
+                    <input type="text" class="form-control" id="teamMember4" name = "teamMember4" placeholder = "teamMember4" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="ign4" class="form-label">IGN of Player 4</label>
+                    <input type="text" class="form-control" id="ign4" name = "ign4" placeholder="IGN" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="uid4" class="form-label">UID of Player 4</label>
+                    <input type="text" class="form-control" id="uid4" name = "uid4" placeholder="UID" required>
+                </div>
+
+                <button type="submit" class="btn btn-danger">Submit</button>
+            </form>
+        </div>
+    </div>

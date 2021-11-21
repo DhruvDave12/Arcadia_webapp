@@ -1,0 +1,21 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+<h1 class = "display-5">Welcome, <%= user.username %> </h1>
+<p class="lead">Here are your details</p>
+
+<div class="card my-3" style="width: 50rem;">
+    <!-- <img src="..." class="card-img-top" alt="..."> -->
+    <div class="card-body">
+      <h5 class="card-title"> <span class = "text-danger">Username</span> - <%= user.username %> </h5>
+      <h5 class="card-title"><span class = "text-danger">College Name</span> - <%= user.clgName %> </h5>
+      <h5 class="card-title"><span class = "text-danger">College ID</span> - <%= user.clgID %> </h5>
+      <h5 class="card-title"><span class = "text-danger">IGN</span> - <%= user.ign %> </h5>
+      <h5 class="card-title"><span class = "text-danger">Date of Birth</span> - <%= user.dob %> </h5>
+      <h5 class="card-title"><span class = "text-danger">EMAIL</span> - <%= user.email %> </h5>
+      <h5 class="card-title"><span class = "text-danger">Games you play</span> - </h5>
+      <ol>
+        <% for(let g of user.games) { %> 
+            <li><%= g %> </li>
+        <% } %> 
+      </ol>
+  </div>

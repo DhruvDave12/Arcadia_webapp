@@ -1,0 +1,82 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+    <h1 class="display-5 my-3 text-center">Register</h1>
+    <div class="container">
+        <form action="/register" method = "POST" class="validated-form" novalidate>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" aria-describedby="email"  name = "email" placeholder = "Email" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name = "password" placeholder = "Password" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="ConfirmPassword" name = "confirmPassword" placeholder = "Confirm Password" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="username" class="form-label">Name</label>
+                <input type="text" class="form-control" id="username" name = "username" placeholder = "Username" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="ign" class="form-label">IGN</label>
+                <input type="text" class="form-control" id="ign" name = "ign" placeholder = "IGN" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="clgName" class="form-label">College Name</label>
+                <input type="text" class="form-control" id="clgName" name = "clgname" placeholder = "College Name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="clgid" class="form-label">College ID</label>
+                <input type="text" class="form-control" id="clgid" name = "clgid" placeholder = "College ID" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="dob" class="form-label">Date Of Birth</label>
+                <input type="date" class="form-control" id="dob" name = "dob" required>
+            </div>
+
+            <!-- Games you play -->
+            <div class="mb-3">
+                <label for="games" class="form-label">Select games you play</label>
+            </div> 
+            <input type="checkbox" class="form-check-input" id="g1" name = "valorant">
+            <label class="form-check-label" for="g1">Valorant</label> <br>
+
+
+            <input type="checkbox" class="form-check-input" id="g2" name = "csgo">
+            <label class="form-check-label" for="g2">CSGO</label> <br>
+
+
+            <input type="checkbox" class="form-check-input" id="g3" name = "apex">
+            <label class="form-check-label" for="g3">Apex Legends</label> <br>
+
+            <input type="checkbox" class="form-check-input" id="g4" name = "bgmi">
+            <label class="form-check-label" for="g4">BGMI</label> <br>
+
+            <input type="checkbox" class="form-check-input" id="g5" name = "r6s">
+            <label class="form-check-label" for="g5">Rainbow Six Siege</label> <br>
+
+            <input type="checkbox" class="form-check-input" id="g6" name = "codm">
+            <label class="form-check-label" for="g6">CODM</label> <br>
+
+            <input type="checkbox" class="form-check-input" id="g7" name = "codPC">
+            <label class="form-check-label" for="g7">Call Of Duty</label> <br><br>
+            
+            <div class="mb-3">
+                <label for="other" class="form-label">Other</label>
+                <input type="text" class="form-control" id="other" name = "other" placeholder = "Any Other one game...." required>
+            </div>
+
+            <p class="lead my-4">Already have an account? <a href="/login">Signin Now</a></p>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+    </div>
