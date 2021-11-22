@@ -12,6 +12,7 @@ const Team = require('../models/valorantTeam.js');
 const Owner = require('../models/valorantOwner.js');
 const CSOwner = require('../models/csgoOwners.js');
 const CSMembs = require('../models/csgoMembers.js');
+const ValoData = require('../models/valoData.js')
 const {isLoggedIn} = require('../middleware.js');
 
 
@@ -39,11 +40,19 @@ router.get('/valo/membs', async(req,res) => {
     const team = await Team.find();
     res.render('events/valoMembers.ejs', {team});
 })
+
 router.get('/valo/teams', async(req,res) => {
     const owner = await Owner.find();
     res.render('events/valoTeams.ejs', {owner});
 })
 
+router.get('/addEvent', async(req,res)=>{
+    res.render('events/addEvent.ejs');
+})
+
+router.get('/addEvent/Valorant',async(req,res)=>{
+    res.render('events/addValorant.ejs');
+})
 
 // TEAM DATA FETCH
 router.post('/valo/reg/team',async(req,res) => {
@@ -78,6 +87,26 @@ router.post('/valo/reg/owner', upload.single('image'), async(req,res) => {
     req.flash('success', "Congrats, your registration has been accepted\nPlease check your details");
     res.redirect('/valo/teams');
 })
+
+//taking data of adding a valo event
+router.post('/addEvent/Valorant', upload.single('image'),async(req,res)=>{
+    const{eventName,prize} = req.body;
+
+    const valoData = new ValoData({
+        eventName:eventName,
+        prize:prize
+
+    })
+
+    valoData.eventLogo.url = req.file.path;
+    valoData.eventLogo.fileName = req.file.filename;
+    await valoData.save();
+    req.flash('success', "Congrats");
+    res.redirect('/valorant');
+})
+
+
+
 
 // csgo start
 router.get('/csgo', async(req,res) => {

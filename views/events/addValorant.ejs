@@ -1,0 +1,32 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+
+
+
+<h1 class="display-5 my-3 text-center">Valorant Add Event</h1>
+
+<!-- Form for adding valorant event -->
+<div class="valoadd">
+    <div class="container">
+        <form action="/addEvent/Valorant" method = "POST" class="validated-form" novalidate id = "addValorant" enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label for="eventName" class="form-label">Name of Event</label>
+                <input type="text" class="form-control" id="eventName" name = "eventName" placeholder="name" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="prize" class="form-label">Total Prize</label>
+                <input type="text" class="form-control" id="prize" name = "prize" placeholder="Amount" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="eventLogo" class="form-label">Event Logo</label>
+                <input type="file" class="form-control" id="eventLogo" name = "image" placeholder = "eventLogo" required>
+            </div>
+           
+
+            <button type="submit" class="btn btn-danger">Submit</button>
+        </form>
+    </div>
+</div>
