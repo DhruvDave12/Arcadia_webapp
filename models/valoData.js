@@ -18,4 +18,4 @@ const valoDataSchema = new Schema({
 })
 
 
-module.exports = mongoose.model('User', valoDataSchema);
+module.exports = mongoose.model('valoData', valoDataSchema);
