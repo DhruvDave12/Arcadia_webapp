@@ -15,6 +15,24 @@ const valoDataSchema = new Schema({
         url: String,
         fileName: String,
     },
+    // added only in model, add this in code ....
+    startDate: {
+        type: String,
+        required: true,
+    },
+    endDate: {
+        type: String,
+        required: true,
+    },
+    winner:{
+        type: String,
+    },
+    tagLine: {
+        type: String,
+    },
+    eventStatus: {
+        type: String,
+    }
 })
 
 

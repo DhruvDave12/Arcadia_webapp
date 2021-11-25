@@ -17,6 +17,10 @@ const User = require('./models/user.js');
 const authRoutes = require('./routes/authentication.js');
 const homepageRoutes = require('./routes/homepage.js');
 const eventRoutes = require('./routes/event.js');
+const valorantRoutes = require('./routes/valorant.js');
+const csgoRoutes = require('./routes/csgo.js');
+const bgmiRoutes = require('./routes/bgmi.js');
+
 
 
 
@@ -74,6 +78,10 @@ app.use((req,res,next) => {
 app.use('/', authRoutes);
 app.use('/', homepageRoutes);
 app.use('/', eventRoutes);
+app.use('/', valorantRoutes);
+app.use('/', csgoRoutes);
+app.use('/', bgmiRoutes);
+
 
 
 app.listen(7777, (req, res) => {

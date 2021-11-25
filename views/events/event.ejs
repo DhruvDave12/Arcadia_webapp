@@ -6,3 +6,83 @@
 <br>
 
 <a href="/addEvent"> Add Event </a>
+
+
+<!-- Displaying cards for event -->
+
+<% if(valoData.length > 0) { %>
+    <!-- Here we will display the events -->
+    <div class="container">
+        <div class="row">
+            <% if(past.length > 0) { %> 
+            <div class="col-md-4"><h2 class="display-6">Past</h2>
+                <div id="carouselExampleControls1" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <% past.forEach((imgs, i)=> { %>
+                            <div class="carousel-item <%= i === 0 ? 'active': '' %>">
+                              <img src="<%= imgs.eventLogo.url %>" class="d-block w-100" alt="">
+                            </div>
+                            <% }) %>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls1" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls1" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+            </div>
+            <% } else { %> <br>
+                <h3 class="display-6">No past events :(</h3>
+            <% } %> 
+            <div class="col-md-4"> <h2 class="display-6">Current</h2> 
+                <% if(current.length > 0) { %> 
+                <div id="carouselExampleControls2" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <% current.forEach((imgs, i)=> { %>
+                            <div class="carousel-item <%= i === 0 ? 'active': '' %>">
+                              <img src="<%= imgs.eventLogo.url %>" class="d-block w-100" alt="">
+                            </div>
+                            <% }) %>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls2" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls2" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+                  <% } else { %> <br>
+                    <h3 class="display-6">No current events :(</h3>
+                <% } %>  
+            </div>
+            <div class="col-md-4"> <h2 class="display-6">Future</h2> 
+                <% if(future.length > 0) { %> 
+                <div id="carouselExampleControls3" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner"> 
+                        <% future.forEach((imgs, i)=> { %>
+                            <div class="carousel-item <%= i === 0 ? 'active': '' %>">
+                              <img src="<%= imgs.eventLogo.url %>" class="d-block w-100" alt="">
+                            </div>
+                            <% }) %>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls3" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls3" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+                  <% } else { %> <br>
+                    <h3 class="diaplay-6">No future events :(</h3>
+                <% } %>  
+            </div>
+        </div>
+    </div>
+<% } %>
