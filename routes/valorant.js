@@ -11,37 +11,38 @@ const Owner = require('../models/valorantOwner.js');
 const ValoData = require('../models/valoData.js')
 const {isLoggedIn} = require('../middleware.js');
 
+
 router.get('/valorant', async(req,res) => {
-    res.render('events/valorant.ejs')
+    res.render('events/Valorant/valorant.ejs')
 })
 
 router.get('/valo/reg', isLoggedIn, async(req,res) => {
-    res.render('events/valoReg.ejs');
+    res.render('events/Valorant/valoReg.ejs');
 })
 
 router.get('/valo/pointsTable', async(req,res) => {
     
     const allTeams = await Owner.find();
-    res.render('events/valoPointstable.ejs', {allTeams});
+    res.render('events/Valorant/valoPointstable.ejs', {allTeams});
 })
 
 router.get('/valo/membs', async(req,res) => {
     
     const team = await Team.find();
-    res.render('events/valoMembers.ejs', {team});
+    res.render('events/Valorant/valoMembers.ejs', {team});
 })
 
 router.get('/valo/teams', async(req,res) => {
     const owner = await Owner.find();
-    res.render('events/valoTeams.ejs', {owner});
+    res.render('events/Valorant/valoTeams.ejs', {owner});
 })
 
 router.get('/addEvent', async(req,res)=>{
-    res.render('events/addEvent.ejs');
+    res.render('events/Valorant/addEvent.ejs');
 })
 
 router.get('/addEvent/Valorant',async(req,res)=>{
-    res.render('events/addValorant.ejs');
+    res.render('events/Valorant/addValorant.ejs');
 })
 
 // TEAM DATA FETCH

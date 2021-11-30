@@ -19,6 +19,9 @@ const teamSchema = new Schema({
     },
     secondaryWeapon: {
         type: String,
+    },
+    owned: {
+        type: Boolean,
     }
 })
 

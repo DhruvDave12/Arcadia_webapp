@@ -9,8 +9,18 @@
           <h5 class="card-title">Secondary Weapon: <%= player.secondaryWeapon %> </h5>
           <h5 class="card-title">Current Rank: <%= player.currentRank %> </h5>
           <h5 class="card-title">Best Rank: <%= player.bestRank %> </h5>
+          <h5 class="card-title">Main Agent: <%= player.mainChar %> </h5>
+          <h5 class="card-title">State: 
+            <% if(player.owned) { %>
+                <span class = "text-success">Owned</span>
+            <% } else { %>
+              <span class="text-danger">Not Owned</span>
+            <% } %>     
+          </h5>
 
-          <a href="/csgo/player/<%= player._id %>/<%= oid %>" class="card-link">Add PLayer</a>
+          <% if(!player.owned) { %> 
+          <a href="/player/<%= player._id %>/<%= oid %>" class="card-link">Add PLayer</a>
+          <% } %> 
         </div>
 
       </div>

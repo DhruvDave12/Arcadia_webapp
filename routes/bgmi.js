@@ -10,18 +10,18 @@ const {cloudinary} = require('../cloudinary/index.js');
 
 // bgmi start
 router.get('/bgmi', async(req,res) => {
-    res.render('events/bgmi.ejs')
+    res.render('events/BGMI/bgmi.ejs')
 })
 
 router.get('/bgmi/reg', isLoggedIn, async(req,res) => {
-    res.render('events/bgmiReg.ejs');
+    res.render('events/BGMI/bgmiReg.ejs');
 })
 
 
 router.get('/bgmi/teams', async(req,res) => {
 
     const bgmiowner = await BGMI.find();
-    res.render('events/bgmiTeams.ejs', {bgmiowner});
+    res.render('events/BGMI/bgmiTeams.ejs', {bgmiowner});
 })
 
 
@@ -50,7 +50,7 @@ router.post('/bgmi/reg/owner', upload.single('image'), async(req,res) => {
 router.get('/bgmiteam/view/:id', async(req,res) => {
     const {id} = req.params;
     const team = await BGMI.findById(id);
-    res.render('events/bgmiMembers.ejs', {team});
+    res.render('events/BGMI/bgmiMembers.ejs', {team});
 })
 // bgmi end
 

@@ -12,22 +12,22 @@ const CSMembs = require('../models/csgoMembers.js');
 
 // csgo start
 router.get('/csgo', async(req,res) => {
-    res.render('events/csgo.ejs')
+    res.render('events/CSGO/csgo.ejs')
 })
 
 router.get('/csgo/reg', isLoggedIn, async(req,res) => {
-    res.render('events/csgoReg.ejs');
+    res.render('events/CSGO/csgoReg.ejs');
 })
 
 router.get('/csgo/membs', async(req,res) => {
     
     const team = await CSMembs.find();
-    res.render('events/csgoMembers.ejs', {team});
+    res.render('events/CSGO/csgoMembers.ejs', {team});
 })
 router.get('/csgo/teams', async(req,res) => {
 
     const owner = await CSOwner.find();
-    res.render('events/csgoTeams.ejs', {owner});
+    res.render('events/CSGO/csgoTeams.ejs', {owner});
 })
 
 
@@ -65,7 +65,7 @@ router.post('/csgo/reg/owner', upload.single('image'), async(req,res) => {
 router.get('/csgo/pointsTable', async(req,res) => {
     
     const allTeams = await CSOwner.find();
-    res.render('events/csgoPointstable.ejs', {allTeams});
+    res.render('events/CSGO/csgoPointstable.ejs', {allTeams});
 })
 // csgo end
 

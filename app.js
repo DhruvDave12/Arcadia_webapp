@@ -20,6 +20,8 @@ const eventRoutes = require('./routes/event.js');
 const valorantRoutes = require('./routes/valorant.js');
 const csgoRoutes = require('./routes/csgo.js');
 const bgmiRoutes = require('./routes/bgmi.js');
+const codmRoutes = require('./routes/codm.js');
+
 
 
 
@@ -81,6 +83,8 @@ app.use('/', eventRoutes);
 app.use('/', valorantRoutes);
 app.use('/', csgoRoutes);
 app.use('/', bgmiRoutes);
+app.use('/', codmRoutes);
+
 
 
 
