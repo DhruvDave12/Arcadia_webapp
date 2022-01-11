@@ -3,12 +3,25 @@
 
 
 
-<h1 class="display-5 my-3 text-center">Valorant Add Event</h1>
+<h1 class="display-5 my-3 text-center">Add Event</h1>
 
 <!-- Form for adding valorant event -->
 <div class="valoadd">
     <div class="container">
-        <form action="/addEvent/Valorant" method = "POST" class="validated-form" novalidate id = "addValorant" enctype="multipart/form-data">
+        <form action="/addEvent" method = "POST" class="validated-form" novalidate id = "addValorant" enctype="multipart/form-data">
+            
+            <div class="mb-3">
+                <label for="games" class="form-label">Game Name:
+                    <input list="games" name = "gameName">
+                </label>
+                <datalist id="games">
+                    <option value="Valorant">
+                    <option value="CSGO">
+                    <option value="CODM">
+                    <option value="ClashRoyale">
+                    <option value="BGMI">
+                </datalist>
+            </div>
 
             <div class="mb-3">
                 <label for="eventName" class="form-label">Name of Event</label>
@@ -29,7 +42,7 @@
                 <label for="endDate" class="form-label">End Date</label>
                 <input type="text" class="form-control" id="endDate" name = "endDate" placeholder="End Date" required>
             </div>
-
+            
             <div class="mb-3">
                 <label for="tagLine" class="form-label">Tag Line</label>
                 <input type="text" class="form-control" id="tagLine" name = "tagLine" placeholder="Tag Line" required>
@@ -39,7 +52,11 @@
                 <label for="eventLogo" class="form-label">Event Logo</label>
                 <input type="file" class="form-control" id="eventLogo" name = "image" placeholder = "eventLogo" required>
             </div>
-           
+            
+            <div class="mb-3">
+                <label for="desc" class="form-label">Description</label> <br>
+                <textarea name="desc" id="desc" cols="40" rows="10"></textarea>
+            </div>
 
             <button type="submit" class="btn btn-success">Submit</button>
         </form>

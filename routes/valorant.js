@@ -8,8 +8,8 @@ const {cloudinary} = require('../cloudinary/index.js');
 // Model for valorant
 const Team = require('../models/valorantTeam.js');
 const Owner = require('../models/valorantOwner.js');
-const ValoData = require('../models/valoData.js')
-const {isLoggedIn} = require('../middleware.js');
+const EventData = require('../models/valoData.js')
+const {isLoggedIn, statusChecker} = require('../middleware.js');
 
 
 router.get('/valorant', async(req,res) => {
@@ -35,14 +35,6 @@ router.get('/valo/membs', async(req,res) => {
 router.get('/valo/teams', async(req,res) => {
     const owner = await Owner.find();
     res.render('events/Valorant/valoTeams.ejs', {owner});
-})
-
-router.get('/addEvent', async(req,res)=>{
-    res.render('events/Valorant/addEvent.ejs');
-})
-
-router.get('/addEvent/Valorant',async(req,res)=>{
-    res.render('events/Valorant/addValorant.ejs');
 })
 
 // TEAM DATA FETCH
@@ -82,86 +74,7 @@ router.post('/valo/reg/owner', upload.single('image'), async(req,res) => {
 
 // Valorant add event feature
 //taking data of adding a valo event
-router.post('/addEvent/Valorant', upload.single('image'),async(req,res)=>{
-    const{eventName,prize, startDate, endDate, tagLine} = req.body;
 
-    const valoData = new ValoData({
-        eventName:eventName,
-        prize:prize,
-        startDate: startDate,
-        endDate: endDate,
-        tagLine: tagLine,
-    })
-
-    valoData.eventLogo.url = req.file.path;
-    valoData.eventLogo.fileName = req.file.filename;
-
-    const currentDate = new Date().toISOString().slice(0,10); // yyyymmdd
-
-    const currentYear = parseInt(currentDate.slice(0,4));
-    const yearStart = parseInt(startDate.slice(0,4));
-    const yearEnd = parseInt(endDate.slice(0,4));
-
-    const monthCurrent = parseInt(currentDate.substring(5,7));
-    const monthStart = parseInt(startDate.substring(5,7));
-    const monthEnd = parseInt(endDate.substring(5,7));
-
-    const currentDay = parseInt(currentDate.substring(8));
-    const startDay = parseInt(startDate.substring(8));
-    const endDay = parseInt(endDate.substring(8));
-
-
-    if(currentYear == yearStart){
-        if(currentYear == yearEnd){
-            if(monthCurrent > monthStart && monthCurrent < monthEnd){
-                valoData.eventStatus = "Current";
-            }
-            if(monthCurrent < monthStart){
-                valoData.eventStatus = "Future";
-            }
-            if(monthCurrent > monthEnd){
-                valoData.eventStatus = "Past";
-            }
-            if(monthCurrent == monthStart && monthCurrent == monthEnd){
-                if(currentDay >= startDay && currentDay <= endDay){
-                    valoData.eventStatus = "Current";
-                }
-                if(currentDay < startDay){
-                    valoData.eventStatus = "Future";
-                }
-                if(currentDay > endDay){
-                    valoData.eventStatus = "Past";
-                }
-            }
-            else if(monthCurrent == monthEnd){
-                if(currentDay <= endDay){
-                    valoData.eventStatus = "Current";
-                }
-                if(currentDay > endDay){
-                    valoData.eventStatus = "Past";
-                }
-            } else if(monthCurrent == monthStart){
-                if(currentDay <= startDay){
-                    valoData.eventStatus = "Future";
-                }
-                if(currentDay > startDay){
-                    valoData.eventStatus = "Current";
-                }
-            }
-        }
-        else if(currentYear < yearEnd){
-            valoData.eventStatus = "Current";
-        }
-    } else if(currentYear < yearStart){
-        valoData.eventStatus = "Future";
-    } else{
-        valoData.eventStatus = "Past";
-    }
-    
-    await valoData.save();
-    req.flash('success', "Congrats, Successfully event added!");
-    res.redirect('/event');
-})
 
 
 module.exports = router;
