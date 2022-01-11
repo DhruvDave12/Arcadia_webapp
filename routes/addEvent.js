@@ -12,16 +12,14 @@ const EventData = require('../models/valoData.js')
 const {isLoggedIn, statusChecker} = require('../middleware.js');
 
 
-router.get('/addEvent', async(req,res)=>{
+router.get('/addEvent', isLoggedIn, async(req,res)=>{
     res.render("events/EventManagement/addEvent.ejs");
 })
 
 
-router.post('/addEvent', upload.single('image'),async(req,res)=>{
+router.post('/addEvent', isLoggedIn, upload.single('image'),async(req,res)=>{
     const{eventName,prize, startDate, endDate, tagLine, gameName, othergame, desc} = req.body;
-    // if(gameName === "Other"){
-    //     gameName = othergame;
-    // }
+   
     const eventData = new EventData({
         eventType: gameName,
         eventName:eventName,
@@ -35,7 +33,7 @@ router.post('/addEvent', upload.single('image'),async(req,res)=>{
     eventData.eventLogo.url = req.file.path;
     eventData.eventLogo.fileName = req.file.filename;
 
-    statusChecker(eventData, startDate, endDate);
+    statusChecker(eventData);
     
     await eventData.save();
     req.flash('success', "Congrats, Successfully event added!");

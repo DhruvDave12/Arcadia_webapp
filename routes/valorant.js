@@ -23,7 +23,18 @@ router.get('/valo/reg', isLoggedIn, async(req,res) => {
 router.get('/valo/pointsTable', async(req,res) => {
     
     const allTeams = await Owner.find();
-    res.render('events/Valorant/valoPointstable.ejs', {allTeams});
+    for(let i=0; i<allTeams.length; i++){
+        for(let j=i+1; j<allTeams.length; j++){
+            if(allTeams[i].points < allTeams[j].points){
+                let temp = allTeams[i];
+                allTeams[i] = allTeams[j];
+                allTeams[j] = temp;
+            }
+        }
+    }
+
+    const currentUser = req.user;
+    res.render('events/Valorant/valoPointstable.ejs', {allTeams, currentUser});
 })
 
 router.get('/valo/membs', async(req,res) => {
@@ -66,6 +77,14 @@ router.post('/valo/reg/owner', upload.single('image'), async(req,res) => {
     })
     owner.teamLogo.url = req.file.path;
     owner.teamLogo.fileName = req.file.filename;
+    owner.points = 0;
+        owner.wins = 0;
+        owner.loss = 0;
+        owner.draws = 0;
+        owner.roundsPlayed = 0;
+        owner.roundsWon = 0;
+        owner.roundsLost = 0;
+        owner.roundDifference = 0;
     await owner.save();
     req.flash('success', "Congrats, your registration has been accepted\nPlease check your details");
     res.redirect('/valo/teams');

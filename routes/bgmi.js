@@ -43,6 +43,16 @@ router.post('/bgmi/reg/owner', upload.single('image'), async(req,res) => {
     })
     bgmiowner.teamLogo.url = req.file.path;
     bgmiowner.teamLogo.fileName = req.file.filename;
+
+    bgmiowner.wins = 0;
+    bgmiowner.loss = 0;
+    bgmiowner.points = 0;
+    bgmiowner.draws = 0;
+    bgmiowner.roundsPlayed = 0;
+    bgmiowner.roundsWon = 0;
+    bgmiowner.roundsLost = 0;
+    bgmiowner.roundDifference = 0;
+
     await bgmiowner.save();
     req.flash('success', "Congrats, your registration has been accepted\nPlease check your details");
     res.redirect('/bgmi/teams');
@@ -51,6 +61,58 @@ router.get('/bgmiteam/view/:id', async(req,res) => {
     const {id} = req.params;
     const team = await BGMI.findById(id);
     res.render('events/BGMI/bgmiMembers.ejs', {team});
+})
+
+router.get("/bgmi/pointstable", async(req,res) => {
+    const allTeams = await BGMI.find();
+
+    for(let i=0; i<allTeams.length; i++){
+        for(let j=i+1; j<allTeams.length; j++){
+            
+            if(allTeams[i].points < allTeams[j].points){
+                let temp = allTeams[i];
+                allTeams[i] = allTeams[j];
+                allTeams[j] = temp;
+            }
+        }
+    }
+
+    res.render("events/BGMI/pointstable.ejs", {allTeams});
+
+})
+
+router.post("/editEvent/bgmi", async(req,res) => {
+    const {win, loss, draws, roundsPlayed, roundsWon, roundsLost, roundDifference, points} = req.body;
+    const teamsToEdit = await BGMI.find();
+    if(teamsToEdit.length===1){
+        teamsToEdit[0].points = points;
+        teamsToEdit[0].wins = win;
+        teamsToEdit[0].loss = loss;
+        teamsToEdit[0].draws = draws;
+        teamsToEdit[0].roundsPlayed = roundsPlayed;
+        teamsToEdit[0].roundsWon = roundsWon;
+        teamsToEdit[0].roundsLost = roundsLost;
+        teamsToEdit[0].roundDifference = roundDifference;
+
+        await teamsToEdit[0].save();
+    } else {
+        for(let i = 0 ; i<teamsToEdit.length; i++){
+            teamsToEdit[i].points = points[i];
+            teamsToEdit[i].wins = win[i];
+            teamsToEdit[i].loss = loss[i];
+            teamsToEdit[i].draws = draws[i];
+            teamsToEdit[i].roundsPlayed = roundsPlayed[i];
+            teamsToEdit[i].roundsWon = roundsWon[i];
+            teamsToEdit[i].roundsLost = roundsLost[i];
+            teamsToEdit[i].roundDifference = roundDifference[i];
+    
+            await teamsToEdit[i].save();
+        }
+    }
+    
+    
+    req.flash("success", "Points table updated successfully");
+    res.redirect("/bgmi/pointstable");
 })
 // bgmi end
 

@@ -57,6 +57,15 @@ router.post('/csgo/reg/owner', upload.single('image'), async(req,res) => {
     })
     owner.teamLogo.url = req.file.path;
     owner.teamLogo.fileName = req.file.filename;
+
+        owner.points = 0;
+        owner.wins = 0;
+        owner.loss = 0;
+        owner.draws = 0;
+        owner.roundsPlayed = 0;
+        owner.roundsWon = 0;
+        owner.roundsLost = 0;
+        owner.roundDifference = 0;
     await owner.save();
     req.flash('success', "Congrats, your registration has been accepted\nPlease check your details");
     res.redirect('/csgo/teams');

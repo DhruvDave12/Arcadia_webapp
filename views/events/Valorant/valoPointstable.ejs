@@ -1,26 +1,70 @@
 <% layout('./layouts/boilerplate.ejs') %>
 
 <% if(allTeams.length === 0) { %>
-    <h2>No current Teams</h2>
-<% } else { %>
-    <% for(let aT of allTeams) { %>
-        <div class="card" style="width: 18rem;">
-            <img src="<%= aT.teamLogo.url %>" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Team Name: <%= aT.teamName %></h5>
+  <h1 class="display-6 text-center">No Teams have registered</h1>
+<% } else { %> 
 
-              <% if(aT.points) { %> 
-              <h5 class="card-title">Total Wins: <%= aT.wins %></h5>
-              <h5 class="card-title">Total Losses: <%= aT.loss %></h5>
-              <h5 class="card-title">Total Draws: <%= aT.draws %></h5>
-              <h5 class="card-title">Rounds Played: <%= aT.roundsPlayed %></h5>
-              <h5 class="card-title">Rounds Won: <%= aT.roundsWon %></h5>
-              <h5 class="card-title">Rounds Lost: <%= aT.roundsLost %></h5>
-              <h5 class="card-title">Rounds Difference: <%= aT.roundDifference %></h5>
-              <h5 class="card-title text-success">Total Points: <%= aT.points %></h5>
-            <% }%> 
-              <a href="/edit/admin/<%= aT._id %>" class="btn btn-primary">Edit Stats</a>
-            </div>
-          </div>
-    <% } %> 
+<% if(currentUser && currentUser.email === "arcadia_admin@iiitvadodara.ac.in") { %>
+  <form action="/editEvent" method = "POST">
+  
+    <table class="table table-dark table-striped">
+      <tr>
+        <th>SNo.</th>
+        <th>TEAM NAME</th>
+        <th>WINS</th>
+        <th>LOSSES</th>
+        <th>DRAWS</th>
+        <th>ROUNDS PLAYED</th>
+        <th>ROUNDS WON</th>
+        <th>ROUNDS LOST</th>
+        <th>ROUNDS DIFFERENCE</th>
+        <th>POINTS</th>
+      </tr>
+      <% for(let i=0; i < allTeams.length; i++) { %>
+        <tr>
+          <td><%= i+1 %> </td>
+          <td> <%= allTeams[i].teamName %></td>
+          <td> <input type="text" style="width: 100px;" value= <%= allTeams[i].wins %> name = "win"> </td>
+          <td> <input type="text" style="width: 100px;"value= <%= allTeams[i].loss %> name = "loss"> </td>
+          <td> <input type="text" style="width: 100px;"value= <%= allTeams[i].draws %> name = "draws"> </td>
+          <td> <input type="text" style="width: 100px;"value= <%= allTeams[i].roundsPlayed %> name = "roundsPlayed"> </td>
+          <td> <input type="text" style="width: 100px;"value= <%= allTeams[i].roundsWon %> name = "roundsWon"> </td>
+          <td> <input type="text" style="width: 100px;"value= <%= allTeams[i].roundsLost %> name = "roundsLost"> </td>
+          <td> <input type="text" style="width: 100px;"value= <%= allTeams[i].roundDifference %> name = "roundDifference"> </td>
+          <td class = "text-warning"> <input type="text" style="width: 100px;"value= <%= allTeams[i].points %> name = "points"> </td>
+        </tr>
+      <% } %> 
+    </table>
+  <button class = "btn btn-danger">EDIT</button>
+  </form>
+<% } else if(currentUser) { %>
+  <table class="table table-dark table-striped">
+    <tr>
+      <th>SNo.</th>
+      <th>TEAM NAME</th>
+      <th>WINS</th>
+      <th>LOSSES</th>
+      <th>DRAWS</th>
+      <th>ROUNDS PLAYED</th>
+      <th>ROUNDS WON</th>
+      <th>ROUNDS LOST</th>
+      <th>ROUNDS DIFFERENCE</th>
+      <th>POINTS</th>
+    </tr>
+  <% for(let i=0; i < allTeams.length; i++) { %>
+    <tr>
+      <td><%= i+1 %> </td>
+      <td><%= allTeams[i].teamName %></td>
+      <td><%= allTeams[i].wins %></td>
+      <td><%= allTeams[i].loss %></td>
+      <td><%= allTeams[i].draws %></td>
+      <td><%= allTeams[i].roundsPlayed %></td>
+      <td><%= allTeams[i].roundsWon %></td>
+      <td><%= allTeams[i].roundsLost %></td>
+      <td><%= allTeams[i].roundDifference %></td>
+      <td class = "text-warning"><%= allTeams[i].points %></td>
+    </tr>
+  <% } %> 
+</table>
+<% }%> 
 <% } %> 

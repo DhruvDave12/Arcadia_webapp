@@ -47,6 +47,15 @@ router.post('/codm/reg/owner', upload.single('image'), async(req,res) => {
     })
     codmowner.teamLogo.url = req.file.path;
     codmowner.teamLogo.fileName = req.file.filename;
+    codmowner.wins = 0;
+    codmowner.loss = 0;
+    codmowner.points = 0;
+    codmowner.draws = 0;
+    codmowner.roundsPlayed = 0;
+    codmowner.roundsWon = 0;
+    codmowner.roundsLost = 0;
+    codmowner.roundDifference = 0;
+
     await codmowner.save();
     req.flash('success', "Congrats, your registration has been accepted\nPlease check your details");
     res.redirect('/codm/teams');
@@ -58,5 +67,54 @@ router.get('/codmteam/view/:id', async(req,res) => {
 })
 
 
+router.get("/codm/pointstable", async(req,res) => {
+    const allTeams = await CODM.find();
+    for(let i=0; i<allTeams.length; i++){
+        for(let j=i+1; j<allTeams.length; j++){
+            
+            if(allTeams[i].points < allTeams[j].points){
+                let temp = allTeams[i];
+                allTeams[i] = allTeams[j];
+                allTeams[j] = temp;
+            }
+        }
+    }
+
+    res.render("events/CODM/pointstable.ejs", {allTeams});
+})
+
+router.post("/editEvent/codm", async(req,res) => {
+    const {win, loss, draws, roundsPlayed, roundsWon, roundsLost, roundDifference, points} = req.body;
+    const teamsToEdit = await CODM.find();
+    if(teamsToEdit.length===1){
+        teamsToEdit[0].points = points;
+        teamsToEdit[0].wins = win;
+        teamsToEdit[0].loss = loss;
+        teamsToEdit[0].draws = draws;
+        teamsToEdit[0].roundsPlayed = roundsPlayed;
+        teamsToEdit[0].roundsWon = roundsWon;
+        teamsToEdit[0].roundsLost = roundsLost;
+        teamsToEdit[0].roundDifference = roundDifference;
+
+        await teamsToEdit[0].save();
+    } else {
+        for(let i = 0 ; i<teamsToEdit.length; i++){
+            teamsToEdit[i].points = points[i];
+            teamsToEdit[i].wins = win[i];
+            teamsToEdit[i].loss = loss[i];
+            teamsToEdit[i].draws = draws[i];
+            teamsToEdit[i].roundsPlayed = roundsPlayed[i];
+            teamsToEdit[i].roundsWon = roundsWon[i];
+            teamsToEdit[i].roundsLost = roundsLost[i];
+            teamsToEdit[i].roundDifference = roundDifference[i];
+    
+            await teamsToEdit[i].save();
+        }
+    }
+    
+    
+    req.flash("success", "Points table updated successfully");
+    res.redirect("/codm/pointstable");
+})
 
 module.exports = router;
