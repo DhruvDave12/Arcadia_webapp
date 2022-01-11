@@ -42,6 +42,30 @@ const bgmiSchema = new Schema({
         url: String,
         fileName: String,
     },
+    points: {
+        type: Number,
+    },
+    wins: {
+        type: Number,
+    },
+    loss: {
+        type: Number,
+    }, 
+    draws: {
+        type: Number,
+    },
+    roundsPlayed: {
+        type: Number,
+    },
+    roundsWon: {
+        type: Number,
+    },
+    roundsLost:{
+        type:Number,
+    },
+    roundDifference: {
+        type: Number,
+    },
 })
 
 module.exports = mongoose.model('Bgmi', bgmiSchema);

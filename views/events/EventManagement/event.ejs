@@ -7,7 +7,9 @@
 
 <br>
 
-<a href="/addEvent"> Add Event </a>
+<% if(currentUser && currentUser.email === "arcadia_admin@iiitvadodara.ac.in") { %> 
+  <a href="/addEvent"> Add Event </a>
+<% } %> 
 
 
 <!-- Displaying cards for event -->

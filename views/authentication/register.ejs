@@ -3,6 +3,12 @@
     <h1 class="display-5 my-3 text-center">Register</h1>
     <div class="container">
         <form action="/register" method = "POST" class="validated-form" novalidate>
+
+            <div class="mb-3">
+                <label for="username" class="form-label">Name</label>
+                <input type="text" class="form-control" id="username" name = "username" placeholder = "Username" required>
+            </div>
+            
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
                 <input type="email" class="form-control" id="email" aria-describedby="email"  name = "email" placeholder = "Email" required>
@@ -16,11 +22,6 @@
             <div class="mb-3">
                 <label for="ConfirmPassword" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" id="ConfirmPassword" name = "confirmPassword" placeholder = "Confirm Password" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="username" class="form-label">Name</label>
-                <input type="text" class="form-control" id="username" name = "username" placeholder = "Username" required>
             </div>
 
             <div class="mb-3">

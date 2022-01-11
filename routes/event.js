@@ -9,7 +9,7 @@ const {storage} = require('../cloudinary/index.js');
 // here we are telling multer to store the stuff inside the storage we created in cloudinary.
 const upload = multer({storage});
 const {cloudinary} = require('../cloudinary/index.js');
-const {isLoggedIn} = require('../middleware.js');
+const {isLoggedIn, statusChecker} = require('../middleware.js');
 
 // Model for valorant
 const Team = require('../models/valorantTeam.js');
@@ -21,12 +21,17 @@ const valorantTeam = require('../models/valorantTeam.js');
 
 
 // DO ADMIN AUTHORIZATION
-router.get('/event', async(req,res) => {
+router.get('/event', isLoggedIn, async(req,res) => {
     
     const valoData = await ValoData.find();
     const current = [];
     const future = [];
     const past = [];
+    // console.log(valoData);
+
+    for(let i=0; i<valoData.length; i++){
+        statusChecker(valoData[i]);
+    }
 
     for(let data of valoData){
         if(data.eventStatus === "Current"){
@@ -38,11 +43,12 @@ router.get('/event', async(req,res) => {
         }
     }
 
-    future.forEach((imgs, i) => {
-        console.log(imgs.url);
-    })
+    // future.forEach((imgs, i) => {
+    //     console.log(imgs.url);
+    // })
     // console.log(valoData, current, past, future);
-    res.render('events/EventManagement/event.ejs', {valoData, current, past, future});
+    const currentUser = req.user;
+    res.render('events/EventManagement/event.ejs', {valoData, current, past, future, currentUser});
 })
 
 // Valo admin level stuff backend
@@ -79,29 +85,40 @@ router.get('/remove/:pid/:tid', async(req,res) => {
     req.flash('success', "Successfully removed the player!");
     res.redirect(`/team/view/${tid}`);
 })
-router.get('/edit/admin/:tid',  async(req,res) => {
-    const {tid} = req.params;
-    res.render('events/Valorant/editStats.ejs', {tid});
+
+router.post("/editEvent", async(req,res) => {
+    const {win, loss, draws, roundsPlayed, roundsWon, roundsLost, roundDifference, points} = req.body;
+    const teamsToEdit = await Owner.find();
+    if(teamsToEdit.length===1){
+        teamsToEdit[0].points = points;
+        teamsToEdit[0].wins = win;
+        teamsToEdit[0].loss = loss;
+        teamsToEdit[0].draws = draws;
+        teamsToEdit[0].roundsPlayed = roundsPlayed;
+        teamsToEdit[0].roundsWon = roundsWon;
+        teamsToEdit[0].roundsLost = roundsLost;
+        teamsToEdit[0].roundDifference = roundDifference;
+
+        await teamsToEdit[0].save();
+    } else {
+        for(let i = 0 ; i<teamsToEdit.length; i++){
+            teamsToEdit[i].points = points[i];
+            teamsToEdit[i].wins = win[i];
+            teamsToEdit[i].loss = loss[i];
+            teamsToEdit[i].draws = draws[i];
+            teamsToEdit[i].roundsPlayed = roundsPlayed[i];
+            teamsToEdit[i].roundsWon = roundsWon[i];
+            teamsToEdit[i].roundsLost = roundsLost[i];
+            teamsToEdit[i].roundDifference = roundDifference[i];
+    
+            await teamsToEdit[i].save();
+        }
+    }
+    
+    
+    req.flash("success", "Points table updated successfully");
+    res.redirect("/valo/pointsTable");
 })
-
-router.post('/edit/:tid',  async(req,res) => {
-    const {tid} = req.params;
-    const teamToEdit = await Owner.findById(tid);
-    const{wins, loss, draws, roundsPlayed, roundsWon, roundsLoss, roundsDiff, points} = req.body;
-    teamToEdit.points = points;
-    teamToEdit.wins = wins;
-    teamToEdit.loss = loss;
-    teamToEdit.draws = draws;
-    teamToEdit.roundsPlayed = roundsPlayed;
-    teamToEdit.roundsWon = roundsWon;
-    teamToEdit.roundsLost = roundsLoss;
-    teamToEdit.roundDifference = roundsDiff;
-
-    await teamToEdit.save();
-    req.flash('success', "Updated Successfully!");
-    res.redirect('/valo/pointsTable');
-})
-
 
 // CSGO Admin Level Stuff
 router.get('/team/view/csgo/:id', async(req,res) => {
@@ -140,31 +157,55 @@ router.get('/csgo/remove/:pid/:tid', async(req,res) => {
     res.redirect(`/team/view/csgo/${tid}`);
 })
 
-router.get('/csgo/edit/admin/:tid', async(req,res) => {
-    const {tid} = req.params;
-    console.log(tid);
-    res.render('events/CSGO/editStatsCSGO.ejs', {tid});
+router.get("/csgopointstable", async(req,res) => {
+    const allTeams = await CSOwner.find();
+    const currentUser = req.user;
+    for(let i=0; i<allTeams.length; i++){
+        for(let j=i+1; j<allTeams.length; j++){
+            if(allTeams[i].points < allTeams[j].points){
+                let temp = allTeams[i];
+                allTeams[i] = allTeams[j];
+                allTeams[j] = temp;
+            }
+        }
+    }
+    res.render("events/CSGO/editStatsCSGO.ejs", {allTeams, currentUser})
 })
 
-router.post('/csgo/edit/:tid', async(req,res) => {
-    const {tid} = req.params;
-    const teamToEdit = await CSOwner.findById(tid);
-    const{wins, loss, draws, roundsPlayed, roundsWon, roundsLoss, roundsDiff, points} = req.body;
-    teamToEdit.points = points;
-    teamToEdit.wins = wins;
-    teamToEdit.loss = loss;
-    teamToEdit.draws = draws;
-    teamToEdit.roundsPlayed = roundsPlayed;
-    teamToEdit.roundsWon = roundsWon;
-    teamToEdit.roundsLost = roundsLoss;
-    teamToEdit.roundDifference = roundsDiff;
+router.post("/editEvent/csgo", async(req,res) => {
+    const {win, loss, draws, roundsPlayed, roundsWon, roundsLost, roundDifference, points} = req.body;
+    const teamsToEdit = await CSOwner.find();
+    if(teamsToEdit.length===1){
+        teamsToEdit[0].points = points;
+        teamsToEdit[0].wins = win;
+        teamsToEdit[0].loss = loss;
+        teamsToEdit[0].draws = draws;
+        teamsToEdit[0].roundsPlayed = roundsPlayed;
+        teamsToEdit[0].roundsWon = roundsWon;
+        teamsToEdit[0].roundsLost = roundsLost;
+        teamsToEdit[0].roundDifference = roundDifference;
 
-    await teamToEdit.save();
-    console.log(teamToEdit);
-    req.flash('success', "Updated Successfully!");
-    res.redirect('/csgo/pointsTable');
+        await teamsToEdit[0].save();
+    } else {
+        for(let i = 0 ; i<teamsToEdit.length; i++){
+            teamsToEdit[i].points = points[i];
+            teamsToEdit[i].wins = win[i];
+            teamsToEdit[i].loss = loss[i];
+            teamsToEdit[i].draws = draws[i];
+            teamsToEdit[i].roundsPlayed = roundsPlayed[i];
+            teamsToEdit[i].roundsWon = roundsWon[i];
+            teamsToEdit[i].roundsLost = roundsLost[i];
+            teamsToEdit[i].roundDifference = roundDifference[i];
+    
+            await teamsToEdit[i].save();
+        }
+    }
+    
+    
+    req.flash("success", "Points table updated successfully");
+    res.redirect("/csgopointstable");
 })
-module.exports = router;
+
 
 // codm admin level stuff
 router.get('/team/view/codm/:id', async(req,res) => {
@@ -174,5 +215,6 @@ router.get('/team/view/codm/:id', async(req,res) => {
     res.render('events/CODM/codmView.ejs', {team, id});
 })
 
+module.exports = router;
 
 // task.date = new Date().toISOString().slice(0, 10); --> to get date in yyyymmdd format
