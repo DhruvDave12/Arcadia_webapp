@@ -16,7 +16,8 @@ router.get('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         const { email, password, confirmPassword, username, ign, clgname, clgid, dob, valorant,
-            csgo, apex, bgmi, r6s, codm, codPC, other} = req.body;
+            csgo, apex, bgmi, r6s, codm, codPC, other, isArcadian} = req.body;
+
         if (confirmPassword !== password) {
             req.flash('error', "Both passwords must match");
             res.redirect('/register');
@@ -51,11 +52,16 @@ router.post('/register', async (req, res) => {
                 dob: dob,
                 username: username,
             })
+            
+            if(isArcadian){
+                user.isArcadian = true;
+            } else{
+                user.isArcadian = false;
+            }
 
             const registeredUser = await User.register(user, password);
             req.login(registeredUser, () => {
                 // Add error feature here.
-
                 req.flash('success', 'Welcome back');
                 res.redirect(`homepage/${user._id}`);
             });

@@ -1,0 +1,9 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+<ol>
+    <% for(let i=0; i < userList.length; i++) { %>
+        <% if(userList[i].isArcadian) { %> 
+        <li><%= userList[i].username %>  </li>
+        <% } %> 
+    <% } %>  
+</ol>

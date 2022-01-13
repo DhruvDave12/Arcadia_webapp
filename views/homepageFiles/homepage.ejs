@@ -15,7 +15,9 @@
       <h5 class="card-title"><span class = "text-danger">Games you play</span> - </h5>
       <ol>
         <% for(let g of user.games) { %> 
-            <li><%= g %> </li>
+            <li> <%= g %> </li>
         <% } %> 
       </ol>
   </div>
+
+  <a class="btn btn-info" href="/edit/profile/<%= user._id %>">Edit</a>
