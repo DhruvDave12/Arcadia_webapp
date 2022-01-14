@@ -1,3 +1,8 @@
+const { isValidObjectId } = require("mongoose");
+const User = require("./models/user");
+const ResetToken = require("./models/resetToken");
+const nodemailer = require('nodemailer');
+
 module.exports.isLoggedIn = (req,res,next) => {
     if(!req.isAuthenticated()){
 
@@ -149,4 +154,30 @@ module.exports.statusChecker = (data) => {
         }
     }
     return data;
+}
+
+exports.isResetTokenValid = async(req,res,next) => {
+    const {token, id} = req.query;
+
+    if(!token || !id) return req.flash("failure", "Invalid Request");
+
+    if(!isValidObjectId(id)){
+        return res.send("Invalid user!");
+    }
+
+    const user = await User.findById(id);
+    if(!user) return res.send("User not found");
+
+    const resetToken = await ResetToken.findOne({ownder: user._id});
+    if(!resetToken){
+        return res.send("Resent token not found");
+    }
+
+    const isValid = await resetToken.compareToken(token);
+    if(!isValid){
+        return res.send("Reset token not valid");
+    }
+
+    req.user = user;
+    next();
 }
