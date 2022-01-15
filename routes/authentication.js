@@ -2,7 +2,14 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user.js');
 const passport = require('passport');
-
+const { generateOTP, mailTransport, generateEmailTemplate, generateResetMail} = require("../public/javascripts/mail");
+const VerificationToken = require('../models/verificationToken');
+const { isValidObjectId } = require('mongoose');
+const ResetToken = require("../models/resetToken");
+const { createRandomBytes } = require('../public/javascripts/resetUtils');
+const crypto = require("crypto");
+const { isResetTokenValid } = require('../middleware');
+const nodemailer = require('nodemailer');
 
 // function authPassValidation()
 router.get('/register', async (req, res) => {
@@ -14,16 +21,27 @@ router.get('/login', async (req, res) => {
 })
 
 router.post('/register', async (req, res) => {
+
     try {
+        const transporter = nodemailer.createTransport(
+            {
+                host: 'smtp.gmail.com',
+                port: 587,
+                auth: {
+                    user: 'davedhruv1201@gmail.com',
+                    pass: 'dhruvd12',
+                },
+            }
+        )
+        transporter.verify().then(console.log).catch(console.error);
         const { email, password, confirmPassword, username, ign, clgname, clgid, dob, valorant,
-            csgo, apex, bgmi, r6s, codm, codPC, other} = req.body;
+            csgo, apex, bgmi, r6s, codm, codPC, other, isArcadian, userOtp } = req.body;
+
         if (confirmPassword !== password) {
             req.flash('error', "Both passwords must match");
             res.redirect('/register');
         } else {
             // Now we will add entry of user in our database
-
-            
             let gamesArr = [];
             if (valorant === 'on') {
                 gamesArr.push("Valorant");
@@ -52,18 +70,38 @@ router.post('/register', async (req, res) => {
                 username: username,
             })
 
+            if (isArcadian) {
+                user.isArcadian = true;
+            } else {
+                user.isArcadian = false;
+            }
+            user.reseter = password;
+            // generating an OTP
+
+            const otp = generateOTP();
+            const verToken = new VerificationToken({
+                owner: user._id,
+                token: otp
+            });
+
+            await verToken.save();
+
             const registeredUser = await User.register(user, password);
             req.login(registeredUser, () => {
                 // Add error feature here.
-
-                req.flash('success', 'Welcome back');
-                res.redirect(`homepage/${user._id}`);
+               transporter.sendMail({
+                    from: 'emailverification@email.com',
+                    to: user.email,
+                    subject: 'Verify your email account',
+                    html: generateEmailTemplate(otp),
+                });
+                res.redirect(`/verify-email/${user._id}`);
             });
         }
 
 
     } catch (err) {
-        
+
         req.flash('error', err.message);
         res.redirect('/register');
     }
@@ -82,6 +120,127 @@ router.get('/logout', async (req, res) => {
     req.logout();
     req.flash('success', "Logged Out Successfully");
     res.redirect('/login');
+})
+
+router.get("/verify-email/:id", async (req, res) => {
+    const { id } = req.params;
+    res.render("authentication/verifyEmail.ejs", { id });
+})
+router.post("/verify-email", async (req, res) => {
+    const { otp } = req.body;
+    const { userID } = req.query;
+    if (!userID || !otp.trim()) return req.flash("failure", "Invalid request, missing parameters");
+
+    // mongoose method
+    if (!isValidObjectId(userID)) {
+        return req.flash("failure", "Invalid request, missing parameters");
+    }
+
+    const user = await User.findById(userID);
+    if (!user) {
+        return req.flash("failure", "No such user exists");
+    }
+
+    if (user.verified) {
+        return req.flash("failure", "This account is already verified");
+    }
+
+    const token = await VerificationToken.findOne({ owner: user._id });
+    if (!token) {
+        return req.flash("failure", "Sorry user not found");
+    }
+
+    const isMatched = await token.compareToken(otp);
+    if (!isMatched) {
+        return req.flash("failure", "Please provide a valid token");
+    }
+    user.verified = true;
+    await VerificationToken.findByIdAndDelete(token._id);
+    await user.save();
+
+    req.flash("success", `Welcome, ${user.username}`);
+    res.redirect(`/homepage/${userID}`);
+});
+
+router.get('/forgot-password', async (req, res) => {
+    res.render('authentication/forgotPassword.ejs');
+})
+router.post("/forgot-password",async (req, res) => {
+    const transporter = nodemailer.createTransport(
+        {
+            host: 'smtp.gmail.com',
+            port: 587,
+            auth: {
+                user: 'davedhruv1201@gmail.com',
+                pass: 'dhruvd12',
+            },
+        }
+    )
+    transporter.verify().then(console.log).catch(console.error);
+
+    const { email } = req.body;
+    if (!email) return req.flash("failure", "Please provide a valid email");
+
+    const user = await User.findOne({ email });
+    if (!user) return req.flash("failure", "No user found");
+
+    console.log(user);
+    const token = await ResetToken.findOne({ owner: user._id });
+    if (token) return req.flash("failure", "Only after one hour you can get another token");
+
+    const tokenn = await createRandomBytes();
+    console.log(tokenn);
+
+    const resetToken = new ResetToken({
+        owner: user._id,
+        token: tokenn
+    });
+    await resetToken.save();
+
+    console.log(resetToken);
+
+    transporter.sendMail({
+        from: "security@gmail.com",
+        to: user.email,
+        subject: "Password Reset Email",
+        html: generateResetMail(`http://localhost:7777/reset-password?token=${tokenn}&id=${user._id}`),
+    });
+
+    req.flash("success", "Password link has been sent to your email address");
+    res.redirect('/forgot-password');
+})
+
+router.get('/reset-password', async (req, res) => {
+    const { token, id } = req.query;
+    res.render('authentication/resetPassword.ejs', { token, id });
+})
+router.post("/reset-password", isResetTokenValid, async (req, res) => {
+    const { reseter, confirmReseter } = req.body;
+
+    if (reseter != confirmReseter) {
+        req.flash("failure", "New Password and Confirm password must match!")
+        res.redirect('/reset-password');
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) return req.flash("failure", "User not found");
+
+
+    user.reseter = reseter.trim();
+    await User.findByUsername(user.username).then(async function (sanitizedUser) {
+        if (sanitizedUser) {
+            await sanitizedUser.setPassword(reseter, async function () {
+                await sanitizedUser.save();
+                req.flash("success", "Password reset successful. Please login with your new password");
+                res.redirect('/login');
+            });
+        } else {
+            req.flash("failure", "Something went wrong");
+            res.redirect('/login');
+        }
+    }, function (err) {
+        res.send(err);
+    })
 })
 
 module.exports = router;

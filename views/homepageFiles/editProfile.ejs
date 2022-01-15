@@ -1,0 +1,41 @@
+<% layout('./layouts/boilerplate.ejs') %>
+
+
+<h1 class="display-6 text-center">Edit Profile</h1>
+<form action="/edit/profile/<%= user._id %>" method = "POST" class="validated-form" novalidate>
+    <div class="mb-3">
+        <label for="username"  class="form-label">Username</label>
+       <input type="text" name="username" class="form-control" value="<%= user.username %>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="clgName"  class="form-label">College Name</label>
+        <input type="text" name="clgName" class="form-control" value = "<%= user.clgName %>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="clgID"  class="form-label">Institute ID</label>
+        <input type="text" name="clgID" class="form-control" value="<%= user.clgID %>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="email"  class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" value="<%= user.email %>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="ign"  class="form-label">IGN</label>
+        <input type="text" name = "ign" class="form-control" value="<%= user.ign %>" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="dob"  class="form-label">DOB</label>
+        <input type="date" name="date" class="form-control" value="<%= user.dob %>" required>
+    </div>
+
+
+    <button type="submit" class="btn btn-warning">Save Changes</button>
+    <a href="/forgot-password">Change Password</a>
+
+
+</form>
