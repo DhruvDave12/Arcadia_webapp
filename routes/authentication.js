@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user.js');
 const passport = require('passport');
-const { generateOTP, mailTransport, generateEmailTemplate, generateResetMail} = require("../public/javascripts/mail");
+const { generateOTP, mailTransport, generateEmailTemplate, generateResetMail } = require("../public/javascripts/mail");
 const VerificationToken = require('../models/verificationToken');
 const { isValidObjectId } = require('mongoose');
 const ResetToken = require("../models/resetToken");
@@ -89,7 +89,7 @@ router.post('/register', async (req, res) => {
             const registeredUser = await User.register(user, password);
             req.login(registeredUser, () => {
                 // Add error feature here.
-               transporter.sendMail({
+                transporter.sendMail({
                     from: 'emailverification@email.com',
                     to: user.email,
                     subject: 'Verify your email account',
@@ -129,30 +129,36 @@ router.get("/verify-email/:id", async (req, res) => {
 router.post("/verify-email", async (req, res) => {
     const { otp } = req.body;
     const { userID } = req.query;
-    if (!userID || !otp.trim()) return req.flash("failure", "Invalid request, missing parameters");
+    if (!userID || !otp.trim()) return req.flash("error", "Invalid request, missing parameters");
 
     // mongoose method
     if (!isValidObjectId(userID)) {
-        return req.flash("failure", "Invalid request, missing parameters");
+        req.flash("error", "Invalid request, missing parameters");
+        return res.redirect('/register');
     }
 
     const user = await User.findById(userID);
     if (!user) {
-        return req.flash("failure", "No such user exists");
+        req.flash("error", "No such user exists");
+        return res.redirect("/register");
     }
 
     if (user.verified) {
-        return req.flash("failure", "This account is already verified");
+        req.flash("error", "This account is already verified");
+        return res.redirect(`/login`);
     }
 
     const token = await VerificationToken.findOne({ owner: user._id });
     if (!token) {
-        return req.flash("failure", "Sorry user not found");
+        req.flash("error", "Sorry user not found");
+        return res.redirect(`/verify-email/${userID}`);
+
     }
 
     const isMatched = await token.compareToken(otp);
     if (!isMatched) {
-        return req.flash("failure", "Please provide a valid token");
+        req.flash("error", "Please provide a valid token");
+        return res.redirect(`/verify-email/${userID}`);
     }
     user.verified = true;
     await VerificationToken.findByIdAndDelete(token._id);
@@ -165,7 +171,7 @@ router.post("/verify-email", async (req, res) => {
 router.get('/forgot-password', async (req, res) => {
     res.render('authentication/forgotPassword.ejs');
 })
-router.post("/forgot-password",async (req, res) => {
+router.post("/forgot-password", async (req, res) => {
     const transporter = nodemailer.createTransport(
         {
             host: 'smtp.gmail.com',
@@ -179,17 +185,25 @@ router.post("/forgot-password",async (req, res) => {
     transporter.verify().then(console.log).catch(console.error);
 
     const { email } = req.body;
-    if (!email) return req.flash("failure", "Please provide a valid email");
+    if (!email) {
+        req.flash("error", "Please provide a valid email");
+        return res.redirect("/forgot-password");
+    }
 
     const user = await User.findOne({ email });
-    if (!user) return req.flash("failure", "No user found");
+    if (!user) {
+        req.flash("error", "No user found. Please register");
+        return res.redirect("/register");
+    }
 
-    console.log(user);
     const token = await ResetToken.findOne({ owner: user._id });
-    if (token) return req.flash("failure", "Only after one hour you can get another token");
+    if (token) {
+        req.flash("error", "Only after one hour you can get another token");
+        return res.redirect("/forgot-password");
+    }
 
     const tokenn = await createRandomBytes();
-    console.log(tokenn);
+
 
     const resetToken = new ResetToken({
         owner: user._id,
@@ -197,7 +211,7 @@ router.post("/forgot-password",async (req, res) => {
     });
     await resetToken.save();
 
-    console.log(resetToken);
+
 
     transporter.sendMail({
         from: "security@gmail.com",
@@ -218,12 +232,15 @@ router.post("/reset-password", isResetTokenValid, async (req, res) => {
     const { reseter, confirmReseter } = req.body;
 
     if (reseter != confirmReseter) {
-        req.flash("failure", "New Password and Confirm password must match!")
-        res.redirect('/reset-password');
+        req.flash("error", "New Password and Confirm password must match!")
+        return res.redirect('/reset-password');
     }
 
     const user = await User.findById(req.user._id);
-    if (!user) return req.flash("failure", "User not found");
+    if (!user) {
+        req.flash("error", "User not found. Please register.");
+        return res.redirect("/register");
+    }
 
 
     user.reseter = reseter.trim();
@@ -232,10 +249,10 @@ router.post("/reset-password", isResetTokenValid, async (req, res) => {
             await sanitizedUser.setPassword(reseter, async function () {
                 await sanitizedUser.save();
                 req.flash("success", "Password reset successful. Please login with your new password");
-                res.redirect('/login');
+                return res.redirect('/login');
             });
         } else {
-            req.flash("failure", "Something went wrong");
+            req.flash("error", "Something went wrong");
             res.redirect('/login');
         }
     }, function (err) {
