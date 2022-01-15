@@ -2,7 +2,16 @@
 
 
 <h1 class="display-6 text-center">Edit Profile</h1>
-<form action="/edit/profile/<%= user._id %>" method = "POST" class="validated-form" novalidate>
+<form action="/edit/profile/<%= user._id %>" method = "POST" class="validated-form" novalidate enctype="multipart/form-data">
+
+    <div class="mb-3">
+        <label for="file-input">
+            <img style="border-radius: 50%; width: 200px; height: 200px;" src="<%= user.profilePhoto.url  %>" alt="">
+          </label>
+        
+          <input id="file-input" type="file" style="display: none;" name ="image">
+    </div>
+
     <div class="mb-3">
         <label for="username"  class="form-label">Username</label>
        <input type="text" name="username" class="form-control" value="<%= user.username %>" required>
@@ -35,7 +44,7 @@
 
 
     <button type="submit" class="btn btn-warning">Save Changes</button>
-    <a href="/forgot-password">Change Password</a>
+    <a href="/forgot-password" class = "btn btn-danger">Change Password</a>
 
 
 </form>

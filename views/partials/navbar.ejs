@@ -16,8 +16,8 @@
               <a class="nav-link active" href="/register">Register</a>
             <% } else { %> 
               <a class="nav-link active" href="/logout">Logout</a>
-              <a class="nav-link active" href="/homepage/<%= currentUser._id %>">Profile</a>
-            <% } %> 
+              <a class="nav-link active" href="/homepage/<%= currentUser._id %>"><img src="<%= currentUser.profilePhoto.url %>" alt="" style="width: 30px; height:30px; border-radius: 50%;"></a>
+              <% } %> 
           </div>
       </div>
     </div>

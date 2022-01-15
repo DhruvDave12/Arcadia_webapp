@@ -4,7 +4,11 @@ const passportLocalMongoose = require('passport-local-mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new Schema({
-    
+
+    profilePhoto: {
+        url: String,
+        fileName: String,
+    },
     clgName: {
         type: String,
         required: true,

@@ -2,7 +2,12 @@
 
     <h1 class="display-5 my-3 text-center">Register</h1>
     <div class="container">
-        <form action="/register" method = "POST" class="validated-form" novalidate>
+        <form action="/register" method = "POST" class="validated-form" novalidate enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label for="profilePhoto" class="form-label">Profile Photo</label>
+                <input type="file" class="form-control" id="profilePhoto" name = "image" placeholder = "Profile Photo" required>
+            </div>
 
             <div class="mb-3">
                 <label for="username" class="form-label">Name</label>

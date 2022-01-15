@@ -11,6 +11,13 @@ const crypto = require("crypto");
 const { isResetTokenValid } = require('../middleware');
 const nodemailer = require('nodemailer');
 
+const multer = require('multer');
+const {storage} = require('../cloudinary/index.js');
+// here we are telling multer to store the stuff inside the storage we created in cloudinary.
+const upload = multer({storage});
+const {cloudinary} = require('../cloudinary/index.js');
+
+
 // function authPassValidation()
 router.get('/register', async (req, res) => {
     res.render('authentication/register.ejs');
@@ -20,7 +27,7 @@ router.get('/login', async (req, res) => {
     res.render('authentication/login.ejs');
 })
 
-router.post('/register', async (req, res) => {
+router.post('/register', upload.single('image'), async (req, res) => {
 
     try {
         const transporter = nodemailer.createTransport(
@@ -76,6 +83,8 @@ router.post('/register', async (req, res) => {
                 user.isArcadian = false;
             }
             user.reseter = password;
+            user.profilePhoto.url = req.file.path;
+            user.profilePhoto.fileName = req.file.filename;
             // generating an OTP
 
             const otp = generateOTP();
