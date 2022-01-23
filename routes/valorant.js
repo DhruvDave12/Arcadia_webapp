@@ -10,7 +10,7 @@ const Team = require('../models/valorantTeam.js');
 const Owner = require('../models/valorantOwner.js');
 const EventData = require('../models/valoData.js')
 const {isLoggedIn, statusChecker} = require('../middleware.js');
-
+const {prioritySetter,rankSorter} = require('../public/javascripts/sorting.js');
 
 router.get('/valorant', async(req,res) => {
     res.render('events/Valorant/valorant.ejs')
@@ -41,6 +41,37 @@ router.get('/valo/membs', async(req,res) => {
     
     const team = await Team.find();
     res.render('events/Valorant/valoMembers.ejs', {team});
+})
+router.post('/valo/mems', async(req,res) => {
+    const team = await Team.find();
+    let bestRankPrior = [];
+    let currentRankPrior = [];
+
+    for(let i=0; i<team.length; i++){
+        let prior = prioritySetter(team[i].bestRank);
+        let prior2 = prioritySetter(team[i].currentRank);
+        let obj = {
+            priority: prior,
+            id: team[i]._id 
+       }
+       let obj2 = {
+           priority: prior2,
+           id: team[i]._id
+       }
+       bestRankPrior.push(obj);
+       currentRankPrior.push(obj2);
+    } 
+
+    bestRankPrior = await rankSorter(bestRankPrior);
+    currentRankPrior = await rankSorter(currentRankPrior);
+    const {sortby} = req.body;
+    if(sortby === "bestrank"){
+        let team = bestRankPrior;
+        return res.render('events/Valorant/valoMembers.ejs', {team});
+    } else if(sortby === "currentrank"){
+        let team = currentRankPrior;
+        return res.render('events/Valorant/valoMembers.ejs', {team});
+    }
 })
 
 router.get('/valo/teams', async(req,res) => {
