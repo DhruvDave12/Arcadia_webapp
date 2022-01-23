@@ -3,6 +3,14 @@
 <% if(team.length === 0){ %>
     <h1 class = "display-6">No members to display</h1>
 <% } else { %>
+    <form action="/csgo/mems" method = "POST">
+        <select name="sortby" id="sortby" onchange="this.form.submit()">
+            <option value="nothing">Sort By</option>
+            <option value="bestrank">Best Rank</option>
+            <option value="currentrank">Current Rank</option>
+        </select>
+    </form>
+
 <% for(let t of team) { %> 
 <div class="card my-3">
     <div class="card-body">

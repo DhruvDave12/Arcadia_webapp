@@ -8,7 +8,7 @@ const {cloudinary} = require('../cloudinary/index.js');
 const {isLoggedIn, isAdmin} = require('../middleware.js');
 const CSOwner = require('../models/csgoOwners.js');
 const CSMembs = require('../models/csgoMembers.js');
-
+const {csgorankSorter, csgoPrioritySetter} = require('../public/javascripts/sorting');
 
 // csgo start
 router.get('/csgo', async(req,res) => {
@@ -20,9 +20,42 @@ router.get('/csgo/reg', isLoggedIn, async(req,res) => {
 })
 
 router.get('/csgo/membs', async(req,res) => {
-    
     const team = await CSMembs.find();
     res.render('events/CSGO/csgoMembers.ejs', {team});
+})
+
+router.post('/csgo/mems', async(req,res) => {
+    const team = await CSMembs.find();
+    let bestRankPrior = [];
+    let currentRankPrior = [];
+
+    for(let i=0; i<team.length; i++){
+        let prior = csgoPrioritySetter(team[i].bestRank);
+        let prior2 = csgoPrioritySetter(team[i].currentRank);
+        let obj = {
+            priority: prior,
+            id: team[i]._id 
+       }
+       let obj2 = {
+           priority: prior2,
+           id: team[i]._id
+       }
+       bestRankPrior.push(obj);
+       currentRankPrior.push(obj2);
+    } 
+
+    bestRankPrior = await csgorankSorter(bestRankPrior);
+    currentRankPrior = await csgorankSorter(currentRankPrior);
+
+    const {sortby} = req.body;
+
+    if(sortby === "bestrank"){
+        let team = bestRankPrior;
+        return res.render('events/CSGO/csgoMembers.ejs', {team});
+    } else if(sortby === "currentrank"){
+        let team = currentRankPrior;
+        return res.render('events/CSGO/csgoMembers.ejs', {team});
+    }
 })
 router.get('/csgo/teams', async(req,res) => {
 

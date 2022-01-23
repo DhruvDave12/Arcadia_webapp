@@ -1,4 +1,5 @@
 const Team = require('../../models/valorantTeam');
+const CSTeams = require('../../models/csgoMembers');
 
 module.exports.prioritySetter = (rank) => {
     let priority = -1;
@@ -71,4 +72,67 @@ module.exports.rankSorter = async (bestRank) => {
     }
 
     return arr;
+}
+
+module.exports.csgorankSorter = async (bestRank) => {
+    let arr = [];
+    for(let i=0; i<bestRank.length; i++){
+        for(let j=i+1; j<bestRank.length; j++){
+            if(bestRank[i].priority > bestRank[j].priority){
+                let temp = bestRank[i];
+                bestRank[i] = bestRank[j];
+                bestRank[j] = temp;
+            }
+        }
+    }
+
+    for(let i=0; i<bestRank.length; i++){
+        const member = await CSTeams.findById(bestRank[i].id);
+        arr.push(member);
+    }
+
+    return arr;
+}
+
+module.exports.csgoPrioritySetter = (rank) => {
+    let priority = -1;
+    if(rank === "Global Elite" || rank === "GE"){
+        priority = 1;
+    } else if (rank === "Supreme Master First Class" || rank === "SMFC"){
+        priority = 2;
+    } else if(rank === "Legendary Eagle Master" || rank === "LEM"){
+        priority = 3;
+    } else if(rank === "Legendary Eagle" || rank === "LE"){
+        priority = 4;
+    } else if(rank === "Distinguished Master Guardian" || rank === "DMG"){
+        priority = 5;
+    } else if(rank === "Master Guardian Elite" || rank === "MGE"){
+        priority = 6;
+    } else if(rank === "Master Guardian 2" || rank === "MG2"){
+        priority = 7;
+    } else if(rank === "Master Guardian 1" || rank === "MG1"){
+        priority = 8;
+    } else if(rank === "Gold Nova Master" || rank === "GNM"){
+        priority = 9;
+    } else if(rank === "Gold Nova 3" || rank === "GN3"){
+        priority = 10;
+    } else if(rank === "Gold Nova 2" || rank === "GN2"){
+        priority = 11;
+    } else if(rank === "Gold Nova 1" || rank === "GN1"){
+        priority = 12;
+    } else if(rank === "Silver Elite Master" || rank === "SEM"){
+        priority = 13;
+    } else if(rank === "Silver Elite" || rank === "SE"){
+        priority = 14;
+    } else if(rank === "Silver 4" || rank === "S4"){
+        priority = 15;
+    } else if(rank === "Silver 3" || rank === "S3"){
+        priority = 16;
+    } else if(rank === "Silver 2" || rank === "S2"){
+        priority = 17;
+    } else if(rank === "Silver 1" || rank === "S1"){
+        priority = 18;
+    } 
+
+    return priority;
 }
